@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--<parent>
+        <artifactId>burstcoin</artifactId>
+        <groupId>burstcoin</groupId>
+        <version>2.3.0</version>
+    </parent>-->
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>burstcoin</groupId>
+    <artifactId>selfupdater</artifactId>
+    <version>2.3.0</version>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources><resource><directory>resources</directory></resource></resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>brs.selfupdater.SelfUpdater</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>ant-clear</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- clear dist dir -->
+                                <delete dir="${project.basedir}/dist"/>
+                                <mkdir dir="${project.basedir}/dist"/>
+                                <mkdir dir="${project.basedir}/dist/tmp"/>
+                                <mkdir dir="${project.basedir}/dist/tmp/burst_db"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ant-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- copy jar-->
+                                <move file="${project.basedir}/target/${project.build.finalName}-jar-with-dependencies.jar"
+                                      tofile="${project.basedir}/dist/tmp/selfupdater.jar"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

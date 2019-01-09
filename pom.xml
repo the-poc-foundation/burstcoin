@@ -7,6 +7,9 @@
   <groupId>burstcoin</groupId>
   <artifactId>burstcoin</artifactId>
   <version>2.3.0</version>
+  <modules>
+    <module>selfupdater</module>
+  </modules>
   <name>Burstcoin Reference Software</name>
   <url>https://github.com/PoC-Consortium/burstcoin</url>
 
@@ -16,7 +19,7 @@
     <url>https://github.com/PoC-Consortium/burstcoin</url>
   </scm>
 
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <properties>
 
@@ -381,9 +384,11 @@
             </goals>
             <configuration>
               <target>
-                <!-- copy jar -->
+                <!-- copy jars -->
                 <move file="${project.basedir}/target/${project.build.finalName}-jar-with-dependencies.jar"
                   tofile="${project.basedir}/dist/tmp/burst.jar"/>
+                <move file="${project.basedir}/selfupdater/dist/tmp/selfupdater.jar"
+                  tofile="${project.basedir}/dist/tmp/selfupdater.jar"/>
 
                 <!-- copy html dir -->
                 <copy todir="${project.basedir}/dist/tmp/html">
