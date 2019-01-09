@@ -128,8 +128,12 @@ public final class Burst {
   }
 
   public static void main(String[] args) {
+    launch(true);
+  }
+
+  public static void launch(boolean addShutdownHook) {
     validateVersionNotDev(VERSION);
-    Runtime.getRuntime().addShutdownHook(new Thread(Burst::shutdown));
+    if (addShutdownHook) Runtime.getRuntime().addShutdownHook(new Thread(Burst::shutdown));
     init();
   }
 

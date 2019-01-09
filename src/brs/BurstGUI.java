@@ -28,14 +28,12 @@ public class BurstGUI extends Application {
     private static final String failedToStartMessage = "BurstGUI caught exception starting BRS";
     private static final String unexpectedExitMessage = "BRS Quit unexpectedly! Exit code ";
 
-    private static String[] args;
     private static boolean userClosed = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(BurstGUI.class);
     private static Stage stage;
     private static TrayIcon trayIcon = null;
 
     public static void main(String[] args) {
-        BurstGUI.args = args;
         addToClasspath("./conf");
         System.setSecurityManager(new BurstGUISecurityManager());
         Platform.setImplicitExit(false);
@@ -53,6 +51,7 @@ public class BurstGUI extends Application {
         stage = primaryStage;
         showTrayIcon();
         new Thread(BurstGUI::runBrs).start();
+        Runtime.getRuntime().addShutdownHook(new Thread(BurstGUI::onShutdown));
     }
 
     public static void addToClasspath(String path) {
@@ -71,10 +70,18 @@ public class BurstGUI extends Application {
 
     private static void shutdown() {
         userClosed = true;
+        System.exit(0);
+    }
+
+    private static void onShutdown() {
+        try {
+            Burst.shutdown(false);
+        } catch (Exception e) {
+            LOGGER.error("Exception shutting down BRS", e);
+        }
         if (trayIcon != null && SystemTray.isSupported()) {
             SystemTray.getSystemTray().remove(trayIcon);
         }
-        System.exit(0); // BRS shutdown handled by exit hook
     }
 
     private static void showTrayIcon() {
@@ -145,7 +152,7 @@ public class BurstGUI extends Application {
 
     private static void runBrs() {
         try {
-            Burst.main(args);
+            Burst.launch(false);
             try {
                 if (Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
                     onTestNetEnabled();
