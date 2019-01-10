@@ -7,9 +7,6 @@
   <groupId>burstcoin</groupId>
   <artifactId>burstcoin</artifactId>
   <version>2.3.0</version>
-  <modules>
-    <module>selfupdater</module>
-  </modules>
   <name>Burstcoin Reference Software</name>
   <url>https://github.com/PoC-Consortium/burstcoin</url>
 
