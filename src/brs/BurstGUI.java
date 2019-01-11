@@ -3,6 +3,7 @@ package brs;
 import brs.http.API;
 import brs.props.PropertyService;
 import brs.props.Props;
+import brs.selfupdater.SelfUpdater;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -226,7 +227,7 @@ public class BurstGUI extends Application {
 
         @Override
         public void checkExit(int status) {
-            if (!userClosed) {
+            if (!userClosed && status != SelfUpdater.UPDATING_EXIT_CODE) {
                 LOGGER.error(unexpectedExitMessage + String.valueOf(status));
                 showMessage(unexpectedExitMessage + String.valueOf(status));
                 onBrsStopped();

@@ -16,7 +16,7 @@
     <url>https://github.com/PoC-Consortium/burstcoin</url>
   </scm>
 
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <properties>
 
