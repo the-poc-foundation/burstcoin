@@ -16,12 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.reflect.Method;
+import java.io.FileDescriptor;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.Permission;
 
 public class BurstGUI extends Application {
@@ -136,7 +135,7 @@ public class BurstGUI extends Application {
     private static void openWebUi() {
         try {
             PropertyService propertyService = Burst.getPropertyService();
-            int port = propertyService.getBoolean(Props.DEV_TESTNET) ? API.TESTNET_API_PORT : propertyService.getInt(Props.API_PORT);
+            int port = propertyService.getBoolean(Props.DEV_TESTNET) ? propertyService.getInt(Props.DEV_API_PORT) : propertyService.getInt(Props.API_PORT);
             String httpPrefix = propertyService.getBoolean(Props.API_SSL) ? "https://" : "http://";
             String address = httpPrefix + "localhost:" + String.valueOf(port);
             try {
@@ -171,12 +170,12 @@ public class BurstGUI extends Application {
     }
 
     private static void onTestNetEnabled() {
-        stage.setTitle(stage.getTitle() + " (TESTNET)");
+        Platform.runLater(() -> stage.setTitle(stage.getTitle() + " (TESTNET)"));
         trayIcon.setToolTip(trayIcon.getToolTip() + " (TESTNET)");
     }
 
     private static void onBrsStopped() {
-        stage.setTitle(stage.getTitle() + " (STOPPED)");
+        Platform.runLater(() -> stage.setTitle(stage.getTitle() + " (STOPPED)"));
         trayIcon.setToolTip(trayIcon.getToolTip() + " (STOPPED)");
     }
 
