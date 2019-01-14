@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sleep 10
+
 updateDir="update/new/"
 backupDir="update/old"
 
@@ -40,6 +42,7 @@ done
 
 # Restore config
 copy -f "$updateDir/conf/brs.properties" "conf/"
+copy -f "$updateDir/conf/logging.properties" "conf/"
 
 # Start BRS
 nohup java -jar burst.jar &>/dev/null &

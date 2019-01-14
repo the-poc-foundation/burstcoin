@@ -21,6 +21,9 @@ public final class Version {
     }
 
     public static Version parse(String version) throws IllegalArgumentException {
+        if (version == null || Objects.equals(version, "")) {
+            return EMPTY;
+        }
         try {
             version = version.replace("-", ".").toLowerCase();
             if (version.startsWith("v")) version = version.substring(1);

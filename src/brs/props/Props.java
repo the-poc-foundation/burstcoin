@@ -43,9 +43,10 @@ public class Props {
 
   public static final Prop<String> BRS_FORGING_STRATEGY = new Prop<>("brs.ForgingStrategy", "slots");
 
-  public static final Prop<Boolean> BRS_SELF_UPDATE = new Prop<>("brs.SelfUpdate", true);
-  public static final Prop<Boolean> BRS_SELF_UPDATE_ANYTIME = new Prop<>("brs.SelfUpdateAnytime", true);
-  public static final Prop<String> BRS_SELF_UPDATE_URL = new Prop<>("brs.SelfUpdateUrl", "");
+  public static final Prop<Boolean> BRS_SELF_UPDATER_ENABLE = new Prop<>("brs.SelfUpdater.Enable", false);
+  public static final Prop<String> BRS_SELF_UPDATER_CHANNEL = new Prop<>("brs.SelfUpdater.Channel", "ultrastable");
+  public static final Prop<Boolean> BRS_SELF_UPDATER_ANYTIME = new Prop<>("brs.SelfUpdater.UpdateAnytime", false);
+  public static final Prop<String> BRS_SELF_UPDATER_URL = new Prop<>("brs.SelfUpdater.Url", "");
 
   // GPU options
   public static final Prop<Boolean> GPU_ACCELERATION     = new Prop<>("GPU.Acceleration", false);

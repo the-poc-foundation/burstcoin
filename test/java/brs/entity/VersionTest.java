@@ -57,6 +57,7 @@ public class VersionTest {
         assertTrue(higherPreRelease.isGreaterThan(higher));
         assertFalse(higher.isPrelease());
         assertTrue(higherPreRelease.isPrelease());
+        assertTrue(higherPreRelease.isGreaterThanOrEqualTo(higherPreRelease));
     }
 
     @Test

@@ -104,6 +104,8 @@ public final class Constants {
   public static final String WEBSITE = "website";
   public static final String PROTOCOL = "protocol";
 
+  public static final String UPDATE_DIR = "update/new/";
+
   private Constants() {
   } // never
 

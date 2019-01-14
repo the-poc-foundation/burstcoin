@@ -1,6 +1,5 @@
 package brs;
 
-import brs.http.API;
 import brs.props.PropertyService;
 import brs.props.Props;
 import brs.selfupdater.SelfUpdater;
@@ -34,7 +33,6 @@ public class BurstGUI extends Application {
     private static TrayIcon trayIcon = null;
 
     public static void main(String[] args) {
-        addToClasspath("./conf");
         System.setSecurityManager(new BurstGUISecurityManager());
         Platform.setImplicitExit(false);
         launch(args);
@@ -54,20 +52,6 @@ public class BurstGUI extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread(BurstGUI::onShutdown));
     }
 
-    public static void addToClasspath(String path) {
-        try {
-            File f = new File(path);
-            URI u = f.toURI();
-            URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Class<URLClassLoader> urlClass = URLClassLoader.class;
-            Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(urlClassLoader, u.toURL());
-        } catch (Exception e) {
-            LOGGER.error("Could not add path \"" + path + "\" to classpath", e);
-        }
-    }
-
     private static void shutdown() {
         userClosed = true;
         System.exit(0);
@@ -82,6 +66,8 @@ public class BurstGUI extends Application {
         if (trayIcon != null && SystemTray.isSupported()) {
             SystemTray.getSystemTray().remove(trayIcon);
         }
+        userClosed = true;
+        System.exit(0);
     }
 
     private static void showTrayIcon() {

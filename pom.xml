@@ -384,8 +384,6 @@
                 <!-- copy jars -->
                 <move file="${project.basedir}/target/${project.build.finalName}-jar-with-dependencies.jar"
                   tofile="${project.basedir}/dist/tmp/burst.jar"/>
-                <move file="${project.basedir}/selfupdater/dist/tmp/selfupdater.jar"
-                  tofile="${project.basedir}/dist/tmp/selfupdater.jar"/>
 
                 <!-- copy html dir -->
                 <copy todir="${project.basedir}/dist/tmp/html">

@@ -1,49 +1,63 @@
 package brs.selfupdater;
 
-public class UpdateInfo {
-    private final Version latestAlpha;
-    private final Version latestBeta;
-    private final Version latestStable;
-    private final Version latestUltrastable;
+import brs.Version;
 
-    public UpdateInfo(Version latestAlpha, Version latestBeta, Version latestStable, Version latestUltrastable) {
+public class UpdateInfo {
+    private final Release latestAlpha;
+    private final Release latestBeta;
+    private final Release latestStable;
+    private final Release latestUltrastable;
+
+    public UpdateInfo(Release latestAlpha, Release latestBeta, Release latestStable, Release latestUltrastable) {
         this.latestAlpha = latestAlpha;
         this.latestBeta = latestBeta;
         this.latestStable = latestStable;
         this.latestUltrastable = latestUltrastable;
     }
 
-    public Version getLatestAlpha() {
+    public Release getLatestAlpha() {
         return latestAlpha;
     }
 
-    public Version getLatestBeta() {
+    public Release getLatestBeta() {
         return latestBeta;
     }
 
-    public Version getLatestStable() {
+    public Release getLatestStable() {
         return latestStable;
     }
 
-    public Version getLatestUltrastable() {
+    public Release getLatestUltrastable() {
         return latestUltrastable;
     }
 
-    public static class Version {
-        private final String version;
+    public static class Release {
+        private final Version version;
+        private final Version minimumPreviousVersion;
         private final String packageUrl;
+        private final byte[] sha256;
 
-        public Version(String version, String packageUrl) {
+        public Release(Version version, Version minimumPreviousVersion, String packageUrl, byte[] sha256) {
             this.version = version;
+            this.minimumPreviousVersion = minimumPreviousVersion;
             this.packageUrl = packageUrl;
+            this.sha256 = sha256;
         }
 
-        public String getVersion() {
+        public Version getVersion() {
             return version;
+        }
+
+        public Version getMinimumPreviousVersion() {
+            return minimumPreviousVersion;
         }
 
         public String getPackageUrl() {
             return packageUrl;
+        }
+
+        public byte[] getSha256() {
+            return sha256;
         }
     }
 }
