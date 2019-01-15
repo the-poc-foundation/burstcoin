@@ -1,8 +1,8 @@
 @echo off
 
 REM give the node time to shutdown
-echo Update starting in 60 seconds...
-timeout 60
+echo BRS Update starting in 30 seconds...
+timeout 30
 
 set updateDir=update\new\
 set backupDir=update\old\

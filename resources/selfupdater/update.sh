@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
 
-sleep 10
+# Check if we want to detach
+if [[ $1 = "detach" ]]; then
+    nohup ./update.sh &
+    exit
+fi
+
+# Wait for BRS to exit
+sleep 30
 
 updateDir="update/new/"
-backupDir="update/old"
+backupDir="update/old/"
 
-files_to_copy=(
-    conf/
-    html/
-    lib/
-    burst.cmd
-    burst.jar
-    burst.sh
-    genscoop.cl
-    init-mysql.sql
-    LICENSE.txt
-    README.md
+files_to_copy=(\
+    conf/\
+    html/\
+    lib/\
+    burst.cmd\
+    burst.jar\
+    burst.sh\
+    genscoop.cl\
+    init-mysql.sql\
+    LICENSE.txt\
+    README.md\
 )
 
 # Check update exists
@@ -30,6 +37,7 @@ if [[ -d "${backupDir}" ]]; then
 fi
 
 # Backup current install
+mkdir ${backupDir}
 for file in ${files_to_copy[@]}; do
     cp -Rf "${file}" "${backupDir}"
 done
@@ -41,8 +49,9 @@ for file in ${files_to_copy[@]}; do
 done
 
 # Restore config
-copy -f "$updateDir/conf/brs.properties" "conf/"
-copy -f "$updateDir/conf/logging.properties" "conf/"
+cp -f "$backupDir/conf/brs.properties" "conf/"
+cp -f "$backupDir/conf/logging.properties" "conf/"
+
 
 # Start BRS
 nohup java -jar burst.jar &>/dev/null &

@@ -192,8 +192,11 @@ public class SelfUpdater {
 
         // Copy the update script from our resources
         String scriptFileName = "update" + (isWindows() ? ".bat" : ".sh");
+        File script = new File(scriptFileName);
+        script.createNewFile();
+        script.setExecutable(true);
         try (InputStream sourceFile = getClass().getResourceAsStream("/selfupdater/"+ scriptFileName);
-             OutputStream targetFile = new FileOutputStream(scriptFileName)) {
+             OutputStream targetFile = new FileOutputStream(script)) {
             byte[] buffer = new byte[1024];
             int len;
             while ((len = sourceFile.read(buffer)) > 0) {
@@ -204,7 +207,7 @@ public class SelfUpdater {
         if (isWindows()) {
             Runtime.getRuntime().exec("cmd /c start update.bat");
         } else {
-            Runtime.getRuntime().exec("nohup sh update.sh &");
+            Runtime.getRuntime().exec("./update.sh detach");
         }
 
         // Say goodbye!
