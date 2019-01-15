@@ -1,6 +1,8 @@
 @echo off
 
-timeout 10
+REM give the node time to shutdown
+echo Update starting in 60 seconds...
+timeout 60
 
 set updateDir=update\new\
 set backupDir=update\old\
@@ -55,6 +57,7 @@ xcopy %backupDir%conf\brs.properties conf\
 xcopy %backupDir%conf\logging.properties conf\
 
 REM Restart node!
-start javaw -jar burst.jar
+javaw -Ddev=t -jar burst.jar
 
-exit /B
+pause
+exit

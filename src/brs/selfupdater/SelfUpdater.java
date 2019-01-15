@@ -6,7 +6,6 @@ import brs.Version;
 import brs.crypto.Crypto;
 import brs.props.Props;
 import brs.util.Convert;
-import org.bouncycastle.util.encoders.Hex;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -201,15 +200,15 @@ public class SelfUpdater {
                 targetFile.write(buffer, 0, len);
             }
         }
+
         if (isWindows()) {
             Runtime.getRuntime().exec("cmd /c start update.bat");
         } else {
             Runtime.getRuntime().exec("nohup sh update.sh &");
         }
+
         // Say goodbye!
-
         logger.warn("Going down for self update... Wish me luck!");
-
         System.exit(UPDATING_EXIT_CODE);
     }
 
