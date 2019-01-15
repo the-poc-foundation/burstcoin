@@ -45,7 +45,7 @@ public class Props {
 
   public static final Prop<Boolean> BRS_SELF_UPDATER_ENABLE = new Prop<>("brs.SelfUpdater.Enable", false);
   public static final Prop<String> BRS_SELF_UPDATER_CHANNEL = new Prop<>("brs.SelfUpdater.Channel", "ultrastable");
-  public static final Prop<Boolean> BRS_SELF_UPDATER_ANYTIME = new Prop<>("brs.SelfUpdater.UpdateAnytime", false);
+  public static final Prop<Boolean> BRS_SELF_UPDATER_ANYTIME = new Prop<>("brs.SelfUpdater.UpdateAnytime", true);
   public static final Prop<String> BRS_SELF_UPDATER_URL = new Prop<>("brs.SelfUpdater.Url", "");
 
   // GPU options
