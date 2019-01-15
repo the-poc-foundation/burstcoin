@@ -207,7 +207,6 @@ public class BurstGUI extends Application {
 
         @Override
         public void checkExit(int status) {
-            System.out.println("checkExit("+status+")");
             if (!userClosed && status != SelfUpdater.UPDATING_EXIT_CODE) {
                 LOGGER.error(unexpectedExitMessage + String.valueOf(status));
                 showMessage(unexpectedExitMessage + String.valueOf(status));

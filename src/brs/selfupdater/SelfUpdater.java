@@ -70,10 +70,18 @@ public class SelfUpdater {
             String channel = Burst.getPropertyService().getString(Props.BRS_SELF_UPDATER_CHANNEL);
             switch (channel) {
                 case "alpha":
+                    if (!Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+                        logger.error("Cannot update to alpha channel except for on TestNet");
+                        return;
+                    }
                     release = updateInfo.getLatestAlpha();
                     break;
 
                 case "beta":
+                    if (!Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+                        logger.error("Cannot update to beta channel except for on TestNet");
+                        return;
+                    }
                     release = updateInfo.getLatestBeta();
                     break;
 
@@ -213,10 +221,6 @@ public class SelfUpdater {
         // Say goodbye!
         logger.warn("Going down for self update... Wish me luck!");
         System.exit(UPDATING_EXIT_CODE);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new SelfUpdater().isWindows());
     }
 
     private boolean isWindows() {

@@ -5,6 +5,7 @@ import brs.assetexchange.AssetExchange;
 import brs.db.BurstIterator;
 import brs.peer.Peer;
 import brs.peer.Peers;
+import brs.props.Props;
 import brs.services.AccountService;
 import brs.services.AliasService;
 import brs.services.EscrowService;
@@ -50,6 +51,10 @@ final class GetState extends APIServlet.APIRequestHandler {
     response.put("lastBlock", blockchain.getLastBlock().getStringId());
     response.put("cumulativeDifficulty", blockchain.getLastBlock().getCumulativeDifficulty().toString());
 
+    response.put("selfUpdateEnabled", Burst.getPropertyService().getBoolean(Props.BRS_SELF_UPDATER_ENABLE));
+    response.put("selfUpdateAnytime", Burst.getPropertyService().getBoolean(Props.BRS_SELF_UPDATER_ANYTIME));
+    response.put("selfUpdateChannel", Burst.getPropertyService().getString(Props.BRS_SELF_UPDATER_CHANNEL));
+    response.put("selfUpdateUrl", Burst.getPropertyService().getString(Props.BRS_SELF_UPDATER_URL));
 
     long totalEffectiveBalance = 0;
     try (BurstIterator<Account> accounts = accountService.getAllAccounts(0, -1)) {
