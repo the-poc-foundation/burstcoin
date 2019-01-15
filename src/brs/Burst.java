@@ -322,7 +322,7 @@ public final class Burst {
       api.shutdown();
     Peers.shutdown(threadPool);
     threadPool.shutdown();
-    if(! ignoreDBShutdown) {
+    if(!ignoreDBShutdown) {
       Db.shutdown();
     }
     dbCacheManager.close();

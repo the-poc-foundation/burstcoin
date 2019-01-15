@@ -60,14 +60,9 @@ public class BurstGUI extends Application {
     private static void onShutdown() {
         try {
             Burst.shutdown(false);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error("Exception shutting down BRS", e);
         }
-        if (trayIcon != null && SystemTray.isSupported()) {
-            SystemTray.getSystemTray().remove(trayIcon);
-        }
-        userClosed = true;
-        System.exit(0);
     }
 
     private static void showTrayIcon() {
@@ -212,6 +207,7 @@ public class BurstGUI extends Application {
 
         @Override
         public void checkExit(int status) {
+            System.out.println("checkExit("+status+")");
             if (!userClosed && status != SelfUpdater.UPDATING_EXIT_CODE) {
                 LOGGER.error(unexpectedExitMessage + String.valueOf(status));
                 showMessage(unexpectedExitMessage + String.valueOf(status));

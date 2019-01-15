@@ -153,7 +153,7 @@ public final class Db {
         logger.info("Database shutdown completed.");
       }
     }
-    if ( ! cp.isClosed() ) {
+    if (cp != null && !cp.isClosed() ) {
       cp.close();
     }
   }
