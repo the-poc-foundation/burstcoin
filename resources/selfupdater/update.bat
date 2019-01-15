@@ -58,6 +58,3 @@ xcopy %backupDir%conf\logging.properties conf\
 
 REM Restart node!
 javaw -Ddev=t -jar burst.jar
-
-pause
-exit
