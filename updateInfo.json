@@ -1,0 +1,28 @@
+{
+  "alpha": {
+    "version": "",
+    "minimumPreviousVersion": "v2.3.0-dev",
+    "packageUrl": "",
+    "packageSha": ""
+  },
+  "beta": {
+    "version": "",
+    "minimumPreviousVersion": "v2.3.0-dev",
+    "packageUrl": "",
+    "packageSha": ""
+  },
+  "stable": {
+    "version": "",
+    "minimumPreviousVersion": "v2.3.0-dev",
+    "packageUrl": "",
+    "packageSha": ""
+  },
+  "ultrastable": {
+    "version": "",
+    "minimumPreviousVersion": "v2.3.0-dev",
+    "packageUrl": 
+"",
+    "sha256": 
+""
+  }
+}
