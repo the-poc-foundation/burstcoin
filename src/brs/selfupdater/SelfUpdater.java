@@ -18,6 +18,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -111,27 +112,31 @@ public class SelfUpdater {
         Version alphaMinimumPreviousVersion = Version.parse((String) alpha.get("minimumPreviousVersion"));
         String alphaPackage = (String) alpha.get("packageUrl");
         byte[] alphaSha256 = Convert.parseHexString((String) alpha.get("sha256"));
+        JSONObject alphaSignatures = (JSONObject) alpha.get("signatures");
         JSONObject beta = (JSONObject) jsonObject.get("beta");
         Version betaVersion = Version.parse((String) beta.get("version"));
         Version betaMinimumPreviousVersion = Version.parse((String) beta.get("minimumPreviousVersion"));
         String betaPackage = (String) beta.get("packageUrl");
         byte[] betaSha256 = Convert.parseHexString((String) beta.get("sha256"));
+        JSONObject betaSignatures = (JSONObject) beta.get("signatures");
         JSONObject stable = (JSONObject) jsonObject.get("stable");
         Version stableVersion = Version.parse((String) stable.get("version"));
         Version stableMinimumPreviousVersion = Version.parse((String) stable.get("minimumPreviousVersion"));
         String stablePackage = (String) stable.get("packageUrl");
         byte[] stableSha256 = Convert.parseHexString((String) stable.get("sha256"));
+        JSONObject stableSignatures = (JSONObject) stable.get("signatures");
         JSONObject ultrastable = (JSONObject) jsonObject.get("ultrastable");
         Version ultrastableVersion = Version.parse((String) ultrastable.get("version"));
         Version ultrastableMinimumPreviousVersion = Version.parse((String) ultrastable.get("minimumPreviousVersion"));
         String ultrastablePackage = (String) ultrastable.get("packageUrl");
         byte[] ultrastableSha256 = Convert.parseHexString((String) ultrastable.get("sha256"));
+        JSONObject ultrastableSignatures = (JSONObject) ultrastable.get("signatures");
 
         return new UpdateInfo(
-                new UpdateInfo.Release(alphaVersion, alphaMinimumPreviousVersion, alphaPackage, alphaSha256),
-                new UpdateInfo.Release(betaVersion, betaMinimumPreviousVersion, betaPackage, betaSha256),
-                new UpdateInfo.Release(stableVersion, stableMinimumPreviousVersion, stablePackage, stableSha256),
-                new UpdateInfo.Release(ultrastableVersion, ultrastableMinimumPreviousVersion, ultrastablePackage, ultrastableSha256)
+                new UpdateInfo.Release(alphaVersion, alphaMinimumPreviousVersion, alphaPackage, alphaSha256, alphaSignatures),
+                new UpdateInfo.Release(betaVersion, betaMinimumPreviousVersion, betaPackage, betaSha256, betaSignatures),
+                new UpdateInfo.Release(stableVersion, stableMinimumPreviousVersion, stablePackage, stableSha256, stableSignatures),
+                new UpdateInfo.Release(ultrastableVersion, ultrastableMinimumPreviousVersion, ultrastablePackage, ultrastableSha256, ultrastableSignatures)
         );
     }
 
@@ -148,6 +153,7 @@ public class SelfUpdater {
         }
 
         // Download file
+        byte[] calculatedHash;
         logger.info("Pulling update from " + release.getPackageUrl());
         try (InputStream inputStream = new URL(release.getPackageUrl()).openStream();
              OutputStream outputStream = new FileOutputStream(new File(Constants.UPDATE_DIR, "package.zip"))) {
@@ -158,12 +164,29 @@ public class SelfUpdater {
                 sha256.update(buffer, 0, len);
                 outputStream.write(buffer, 0, len);
             }
-            byte[] calculatedHash = sha256.digest();
+            calculatedHash = sha256.digest();
             if (Arrays.equals(calculatedHash, release.getSha256())) {
                 logger.info("Successfully pulled file with matching SHA-256 hash of " + Convert.toHexString(calculatedHash));
             } else {
                 throw new IOException("SHA-256 hashes not equal. Calculated " + Convert.toHexString(calculatedHash) + " and expected " + Convert.toHexString(release.getSha256()));
             }
+        }
+
+        // Verify signature
+        List<String> signingKeys = propertyService.getStringList(Props.BRS_SELF_UPDATER_KEYS);
+        int numValidSignatures = 0;
+        for (String key : signingKeys) {
+            String signature = (String) release.getSignatures().get(key);
+            if (signature == null) continue;
+            if (Crypto.verify(Convert.parseHexString(signature), calculatedHash, Convert.parseHexString(key), true))
+                numValidSignatures++;
+        }
+
+        // Make sure at least half of the registered signing keys have signed the release
+        if (numValidSignatures < (signingKeys.size() + 1) / 2) { // Divide by 2 with round up
+            throw new IllegalArgumentException("Not enough valid signatures. " + numValidSignatures + " valid signatures provided and " + ((signingKeys.size() + 1) / 2) + " required (" + signingKeys.size() + " registered)");
+        } else {
+            logger.info("Update signatures OK: " + numValidSignatures + " valid signatures provided and " + ((signingKeys.size() + 1) / 2) + " required (" + signingKeys.size() + " registered)");
         }
 
         // Unzip
@@ -211,11 +234,11 @@ public class SelfUpdater {
             }
         }
 
-        if (isWindows()) {
+        /*if (isWindows()) {
             Runtime.getRuntime().exec("cmd /c start update.bat");
         } else {
             Runtime.getRuntime().exec("./update.sh detach");
-        }
+        }*/
 
         // Say goodbye!
         logger.warn("Going down for self update... Wish me luck!");

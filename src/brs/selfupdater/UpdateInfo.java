@@ -1,6 +1,7 @@
 package brs.selfupdater;
 
 import brs.Version;
+import org.json.simple.JSONObject;
 
 public class UpdateInfo {
     private final Release latestAlpha;
@@ -36,12 +37,14 @@ public class UpdateInfo {
         private final Version minimumPreviousVersion;
         private final String packageUrl;
         private final byte[] sha256;
+        private final JSONObject signatures;
 
-        public Release(Version version, Version minimumPreviousVersion, String packageUrl, byte[] sha256) {
+        public Release(Version version, Version minimumPreviousVersion, String packageUrl, byte[] sha256, JSONObject signatures) {
             this.version = version;
             this.minimumPreviousVersion = minimumPreviousVersion;
             this.packageUrl = packageUrl;
             this.sha256 = sha256;
+            this.signatures = signatures;
         }
 
         public Version getVersion() {
@@ -58,6 +61,10 @@ public class UpdateInfo {
 
         public byte[] getSha256() {
             return sha256;
+        }
+
+        public JSONObject getSignatures() {
+            return signatures;
         }
     }
 }
