@@ -23,6 +23,7 @@ import brs.peer.Peers;
 import brs.props.PropertyService;
 import brs.props.PropertyServiceImpl;
 import brs.props.Props;
+import brs.selfupdater.SelfUpdater;
 import brs.services.*;
 import brs.services.impl.*;
 import brs.statistics.StatisticsManagerImpl;
@@ -157,6 +158,8 @@ public final class Burst {
 
     try {
       long startTime = System.currentTimeMillis();
+
+      SelfUpdater.start(propertyService);
 
       final TimeService timeService = new TimeServiceImpl();
 

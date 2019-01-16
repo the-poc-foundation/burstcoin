@@ -2,6 +2,7 @@ package brs;
 
 import brs.props.Props;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -104,7 +105,7 @@ public final class Constants {
   public static final String WEBSITE = "website";
   public static final String PROTOCOL = "protocol";
 
-  public static final String UPDATE_DIR = "update/new/";
+  public static final File UPDATE_DIR = new File("./update/new/");
 
   private Constants() {
   } // never

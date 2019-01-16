@@ -4,6 +4,7 @@ import brs.Burst;
 import brs.Constants;
 import brs.Version;
 import brs.crypto.Crypto;
+import brs.props.PropertyService;
 import brs.props.Props;
 import brs.util.Convert;
 import org.json.simple.JSONObject;
@@ -23,54 +24,49 @@ import java.util.zip.ZipInputStream;
 
 public class SelfUpdater {
     public static final int UPDATING_EXIT_CODE = 8;
+    private final PropertyService propertyService;
     private final Logger logger = LoggerFactory.getLogger(SelfUpdater.class);
 
-    public static void start() {
-        new Thread(() -> new SelfUpdater().startCheckingForUpdates()).start();
+    public SelfUpdater(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
+    public static void start(PropertyService propertyService) {
+        new Thread(() -> new SelfUpdater(propertyService).startCheckingForUpdates()).start();
     }
 
     private void startCheckingForUpdates() {
-        // Wait for BRS to load properties
-        while (Burst.getPropertyService() == null) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        // Cleanup (in case we just updated)c
+        // Cleanup (in case we just updated)
         new File("update.sh").delete();
         new File("update.bat").delete();
 
-        if (!Burst.getPropertyService().getBoolean(Props.BRS_SELF_UPDATER_ENABLE)) {
+        if (!propertyService.getBoolean(Props.BRS_SELF_UPDATER_ENABLE)) {
             logger.info("Not starting auto-updater: Disabled in config.");
             return;
         }
 
-        if (Burst.getPropertyService().getBoolean(Props.BRS_SELF_UPDATER_ANYTIME)) {
-            logger.info("Starting self update thread!");
-            new Thread(() -> {
-                //noinspection InfiniteLoopStatement
-                while(true) checkForUpdate(false);
-            }).start();
+        if (propertyService.getBoolean(Props.BRS_SELF_UPDATER_ANYTIME)) {
+            logger.info("Starting self update checker!");
+            while (true) {
+                waitToCheckForUpdate();
+                checkForUpdate();
+            }
         } else {
             logger.info("Not allowed to update anytime - will update once");
-            checkForUpdate(true);
+            checkForUpdate();
         }
     }
 
-    private void checkForUpdate(boolean checkImmediately) {
-        String url = Burst.getPropertyService().getString(Props.BRS_SELF_UPDATER_URL);
-        if (!checkImmediately) waitToCheckForUpdate();
+    private void checkForUpdate() {
+        String url = propertyService.getString(Props.BRS_SELF_UPDATER_URL);
         logger.info("Getting update information from " + url);
         try {
             UpdateInfo updateInfo = getUpdateInfo(url);
             UpdateInfo.Release release;
-            String channel = Burst.getPropertyService().getString(Props.BRS_SELF_UPDATER_CHANNEL);
+            String channel = propertyService.getString(Props.BRS_SELF_UPDATER_CHANNEL);
             switch (channel) {
                 case "alpha":
-                    if (!Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+                    if (!propertyService.getBoolean(Props.DEV_TESTNET)) {
                         logger.error("Cannot update to alpha channel except for on TestNet");
                         return;
                     }
@@ -78,7 +74,7 @@ public class SelfUpdater {
                     break;
 
                 case "beta":
-                    if (!Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+                    if (!propertyService.getBoolean(Props.DEV_TESTNET)) {
                         logger.error("Cannot update to beta channel except for on TestNet");
                         return;
                     }
@@ -141,7 +137,7 @@ public class SelfUpdater {
 
     private void performUpdate(UpdateInfo.Release release) throws IOException {
         // Clear previous update
-        File updateDir = new File(Constants.UPDATE_DIR);
+        File updateDir = Constants.UPDATE_DIR;
         if (!updateDir.exists()) {
             updateDir.mkdirs();
         }
@@ -176,6 +172,7 @@ public class SelfUpdater {
             byte[] buffer = new byte[1024];
             ZipEntry ze = zipInputStream.getNextEntry();
             while (ze != null) {
+                checkUnzipDestination(ze, Constants.UPDATE_DIR);
                 String fileName = ze.getName();
                 File newFile = new File(Constants.UPDATE_DIR, fileName);
                 if (ze.isDirectory()) {
@@ -197,6 +194,8 @@ public class SelfUpdater {
                 ze = zipInputStream.getNextEntry();
             }
         }
+
+        logger.info("Update extracted! Preparing to update...");
 
         // Copy the update script from our resources
         String scriptFileName = "update" + (isWindows() ? ".bat" : ".sh");
@@ -225,6 +224,15 @@ public class SelfUpdater {
 
     private boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
+    private void checkUnzipDestination(ZipEntry ze, File destinationDir) throws IOException {
+        String canonicalDestinationDirPath = destinationDir.getCanonicalPath();
+        File destinationfile = new File(destinationDir, ze.getName());
+        String canonicalDestinationFile = destinationfile.getCanonicalPath();
+        if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
+            throw new IllegalArgumentException("Entry is outside of the target dir: " + ze.getName());
+        }
     }
 
     private void waitToCheckForUpdate() {
