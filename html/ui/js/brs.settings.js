@@ -11,7 +11,7 @@ var BRS = (function(BRS, $, undefined) {
 	"asset_transfer_warning": "10000",
 	"24_hour_format": 1,
 	"remember_passphrase": 0,
-	"language": "en"
+		"language": "zh-cn"
     };
     BRS.pages.settings = function() {
 	for (var key in BRS.settings) {
