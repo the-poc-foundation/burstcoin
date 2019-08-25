@@ -10,6 +10,7 @@ import brs.services.TransactionService;
 import brs.util.Convert;
 import brs.util.DownloadCacheImpl;
 import brs.util.ThreadPool;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,12 +163,20 @@ public class BlockServiceImpl implements BlockService {
 
   @Override
   public long getBlockReward(Block block) {
-    if (block.getHeight() == 0 || block.getHeight() >= 1944000) {
+    if (block.getHeight() == 0 || block.getHeight() > Constants.BLOCK_REWARD_MAX_HEIGHT) {
       return 0;
     }
-    int month = block.getHeight() / 10800;
-    return BigInteger.valueOf(10000).multiply(BigInteger.valueOf(95).pow(month))
-        .divide(BigInteger.valueOf(100).pow(month)).longValue() * Constants.ONE_BURST;
+    int round = (block.getHeight() - 1) / Constants.REDUCED_HEIGHT_OF_ROUND;
+    BigInteger reward = BigInteger.valueOf(20).multiply(BigInteger.valueOf(Constants.ONE_BURST * 10));
+
+    for (int idx = 0; idx < round; idx++) {
+      reward = reward.divide(BigInteger.valueOf(2));
+    }
+    if(block.getHeight() == 1){
+      return Math.round(Math.ceil(reward.doubleValue() / 10)) + Constants.MINING_IN_ADVANCE_TOTAL;
+    }else{
+      return Math.round(Math.ceil(reward.doubleValue() / 10));
+    }
   }
 
   @Override

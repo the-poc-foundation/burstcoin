@@ -7,6 +7,10 @@ import java.util.TimeZone;
 
 public final class Constants {
 
+  public static final int REDUCED_HEIGHT_OF_ROUND = 525000;
+  public static final int BLOCK_REWARD_MAX_HEIGHT = 17325000;
+  public static final int MINING_IN_ADVANCE_TOTAL = 1500000;
+
   public static final int BURST_DIFF_ADJUST_CHANGE_BLOCK = 2700;
 
   public static final long BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME = 4;
