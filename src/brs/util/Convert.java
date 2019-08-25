@@ -57,7 +57,7 @@ public final class Convert {
   }
 
   public static String rsAccount(long accountId) {
-    return "BURST-" + Crypto.rsEncode(accountId);
+    return "POC-" + Crypto.rsEncode(accountId);
   }
 
   public static long fullHashToId(byte[] hash) {
