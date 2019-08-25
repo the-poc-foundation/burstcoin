@@ -2558,7 +2558,9 @@ public abstract class TransactionType {
   }
 
   protected Fee getBaselineFee(int height) {
-    return new Fee((fluxCapacitor.getValue(FluxValues.PRE_DYMAXION, height) ? FEE_QUANT : ONE_BURST), 0);
+    //  OOOOO  mark  调整最小手续费
+    return new Fee(FEE_QUANT, 0);
+//    return new Fee((fluxCapacitor.getValue(FluxValues.PRE_DYMAXION, height) ? FEE_QUANT : ONE_BURST), 0);
   }
 
   public static final class Fee {

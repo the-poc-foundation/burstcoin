@@ -1189,8 +1189,9 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
           } else if (transaction.getSize() > payloadSize) {
             continue;
           }
-
-          long slotFee = Burst.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? slot * FEE_QUANT : ONE_BURST;
+// OOOOO mark 调整手续费
+//          long slotFee = Burst.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? slot * FEE_QUANT : ONE_BURST;
+          long slotFee = slot * FEE_QUANT ;
           if (transaction.getFeeNQT() >= slotFee) {
             if (transactionService.applyUnconfirmed(transaction)) {
               try {

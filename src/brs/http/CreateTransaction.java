@@ -62,7 +62,9 @@ abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
   }
 
   private long minimumFeeNQT() {
-    return Burst.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? FEE_QUANT : ONE_BURST;
+//    return Burst.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? FEE_QUANT : ONE_BURST;
+//  OOOOO  mark  调整最小手续费
+    return FEE_QUANT;
   }
 
 }
