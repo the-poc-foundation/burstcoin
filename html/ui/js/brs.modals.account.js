@@ -63,7 +63,7 @@ var BRS = (function(BRS, $, undefined) {
 	    $("#user_info_modal_account_balance").html("0");
 	}
         else {
-	    $("#user_info_modal_account_balance").html(BRS.formatAmount(account.unconfirmedBalanceNQT) + " BURST");
+	    $("#user_info_modal_account_balance").html(BRS.formatAmount(account.unconfirmedBalanceNQT) + " POC");
 	}
 
 	if (account.name) {
@@ -276,7 +276,7 @@ var BRS = (function(BRS, $, undefined) {
 			}
 		    }
 
-		    if (/^BURST\-/i.test(BRS.userInfoModal.user)) {
+		    if (/^POC\-/i.test(BRS.userInfoModal.user)) {
 			receiving = (transaction.recipientRS == BRS.userInfoModal.user);
 		    }
                     else {
@@ -364,7 +364,7 @@ var BRS = (function(BRS, $, undefined) {
 		    if (good.name.length > 150) {
 			good.name = good.name.substring(0, 150) + "...";
 		    }
-		    rows += "<tr><td><a href='#' data-goto-goods='" + String(good.goods).escapeHTML() + "' data-seller='" + String(BRS.userInfoModal.user).escapeHTML() + "'>" + String(good.name).escapeHTML() + "</a></td><td>" + BRS.formatAmount(good.priceNQT) + " BURST</td><td>" + BRS.format(good.quantity) + "</td></tr>";
+		    rows += "<tr><td><a href='#' data-goto-goods='" + String(good.goods).escapeHTML() + "' data-seller='" + String(BRS.userInfoModal.user).escapeHTML() + "'>" + String(good.name).escapeHTML() + "</a></td><td>" + BRS.formatAmount(good.priceNQT) + " POC</td><td>" + BRS.format(good.quantity) + "</td></tr>";
 		}
 	    }
 

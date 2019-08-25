@@ -88,7 +88,7 @@ var BRS = (function(BRS, $, undefined) {
             "<tr><td style='width:150px'><strong>" + $.t("order_date") + "</strong>:</td><td>" + BRS.formatTimestamp(purchase.timestamp) + "</td></tr>" +
             "<tr><td><strong>" + $.t("order_status") + "</strong>:</td><td><span class='order_status'>" + (statusHTML ? statusHTML : status) + "</span></td></tr>" +
             (purchase.pending ? "<tr><td><strong>" + $.t("delivery_deadline") + "</strong>:</td><td>" + BRS.formatTimestamp(purchase.deliveryDeadlineTimestamp) + "</td></tr>" : "") +
-            "<tr><td><strong>" + $.t("price") + "</strong>:</td><td>" + BRS.formatAmount(purchase.priceNQT) + " BURST</td></tr>" +
+            "<tr><td><strong>" + $.t("price") + "</strong>:</td><td>" + BRS.formatAmount(purchase.priceNQT) + " POC</td></tr>" +
             "<tr><td><strong>" + $.t("quantity") + "</strong>:</td><td>" + BRS.format(purchase.quantity) + "</td></tr>" +
             (purchase.seller == BRS.account && purchase.feedbackNote ? "<tr><td><strong>" + $.t("feedback") + "</strong>:</td><td>" + $.t("includes_feedback") + "</td></tr>" : "") +
             "</table></div>" +
@@ -108,7 +108,7 @@ var BRS = (function(BRS, $, undefined) {
             "<table class='purchase' style='margin-bottom:5px'>" +
             "<tr><td style='width:150px'><strong>Order Date</strong>:</td><td>" + BRS.formatTimestamp(purchase.timestamp) + "</td></tr>" +
             "<tr><td><strong>" + $.t("delivery_deadline") + "</strong>:</td><td>" + BRS.formatTimestamp(purchase.deliveryDeadlineTimestamp) + "</td></tr>" +
-            "<tr><td><strong>" + $.t("price") + "</strong>:</td><td>" + BRS.formatAmount(purchase.priceNQT) + " BURST</td></tr>" +
+            "<tr><td><strong>" + $.t("price") + "</strong>:</td><td>" + BRS.formatAmount(purchase.priceNQT) + " POC</td></tr>" +
             "<tr><td><strong>" + $.t("quantity") + "</strong>:</td><td>" + BRS.format(purchase.quantity) + "</td></tr>" +
             "</table>" +
             "<span class='delivery'>" + (!delivered ? "<button type='button' class='btn btn-default btn-deliver' data-toggle='modal' data-target='#dgs_delivery_modal' data-purchase='" + String(purchase.purchase).escapeHTML() + "'>" + $.t("deliver_goods") + "</button>" : $.t("delivered")) + "</span>" +
@@ -308,7 +308,7 @@ var BRS = (function(BRS, $, undefined) {
                     + "'>" + String(unconfirmedTransaction.name).escapeHTML() + "</a></td><td class='quantity'>"
                     + BRS.format(unconfirmedTransaction.quantity) + "</td><td class='price'>"
                     + BRS.formatAmount(unconfirmedTransaction.priceNQT)
-                    + " BURST</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='"
+                    + " POC</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='"
                     + String(unconfirmedTransaction.goods).escapeHTML() + "'>" + $.t("change_price")
                     + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_quantity_change_modal' data-goods='"
                     + String(unconfirmedTransaction.goods).escapeHTML() + "'>" + $.t("change_qty")
@@ -361,7 +361,7 @@ var BRS = (function(BRS, $, undefined) {
                         + String(good.goods).escapeHTML() + "'>" + String(good.name).escapeHTML() + "</a></td><td class='quantity'>"
                         + (quantityFormatted ? good.quantity : BRS.format(good.quantity)) + "</td><td class='price'>"
                         + BRS.formatAmount(good.priceNQT) +
-                        " BURST</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='"
+                        " POC</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='"
                         + String(good.goods).escapeHTML() + "'>" + $.t("change_price") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_quantity_change_modal' data-goods='"
                         + String(good.goods).escapeHTML() + "'>" + $.t("change_qty") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_delisting_modal' data-goods='"
                         + String(good.goods).escapeHTML() + "'>" + $.t("delete") + "</a></td></tr>";
@@ -447,7 +447,7 @@ var BRS = (function(BRS, $, undefined) {
         if (BRS.currentPage == "my_dgs_listings") {
             var $table = $("#my_dgs_listings_table tbody");
 
-            var rowToAdd = "<tr class='tentative' data-goods='" + String(response.transaction).escapeHTML() + "'><td><a href='#' data-toggle='modal' data-target='#dgs_listing_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + String(data.name).escapeHTML() + "</a></td><td class='quantity'>" + BRS.format(data.quantity) + "</td><td class='price'>" + BRS.formatAmount(data.priceNQT) + " BURST</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("change_price") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_quantity_change_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("change_qty") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_delisting_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("delete") + "</a></td></tr>";
+            var rowToAdd = "<tr class='tentative' data-goods='" + String(response.transaction).escapeHTML() + "'><td><a href='#' data-toggle='modal' data-target='#dgs_listing_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + String(data.name).escapeHTML() + "</a></td><td class='quantity'>" + BRS.format(data.quantity) + "</td><td class='price'>" + BRS.formatAmount(data.priceNQT) + " POC</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_price_change_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("change_price") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_quantity_change_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("change_qty") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#dgs_delisting_modal' data-goods='" + String(response.transaction).escapeHTML() + "'>" + $.t("delete") + "</a></td></tr>";
 
             $table.prepend(rowToAdd);
 
@@ -666,7 +666,7 @@ var BRS = (function(BRS, $, undefined) {
             return;
         }
 
-        $("#my_dgs_listings_table tr[data-goods=" + String(data.goods).escapeHTML() + "]").addClass("tentative").find(".price").html(BRS.formatAmount(data.priceNQT) + " BURST");
+        $("#my_dgs_listings_table tr[data-goods=" + String(data.goods).escapeHTML() + "]").addClass("tentative").find(".price").html(BRS.formatAmount(data.priceNQT) + " POC");
     };
 
     BRS.forms.dgsRefundComplete = function(response, data) {
@@ -734,7 +734,7 @@ var BRS = (function(BRS, $, undefined) {
                         var output = "<table>";
                         var orderTotal;
                         output += "<tr><th style='width:85px;'><strong>" + $.t("product") + "</strong>:</th><td>" + String(good.name).escapeHTML() + "</td></tr>";
-                        output += "<tr><th><strong>" + $.t("price") + "</strong>:</th><td>" + BRS.formatAmount(response.priceNQT) + " BURST</td></tr>";
+                        output += "<tr><th><strong>" + $.t("price") + "</strong>:</th><td>" + BRS.formatAmount(response.priceNQT) + " POC</td></tr>";
                         output += "<tr><th><strong>" + $.t("quantity") + "</strong>:</th><td>" + BRS.format(response.quantity) + "</td></tr>";
                         if (good.delisted) {
                             output += "<tr><th><strong>" + $.t("status") + "</strong>:</th><td>" + $.t("no_longer_for_sale") + "</td></tr>";
@@ -749,10 +749,10 @@ var BRS = (function(BRS, $, undefined) {
                             }
                             if (response.quantity != "1") {
                                 orderTotal = BRS.formatAmount(new BigInteger(String(response.quantity)).multiply(new BigInteger(String(response.priceNQT))));
-                                output += "<tr><th><strong>" + $.t("total") + "</strong>:</th><td>" + orderTotal + " BURST</td></tr>";
+                                output += "<tr><th><strong>" + $.t("total") + "</strong>:</th><td>" + orderTotal + " POC</td></tr>";
                             }
                             if (response.discountNQT && (type == "dgs_refund_modal" || type == "dgs_feedback_modal")) {
-                                output += "<tr><th><strong>" + $.t("discount") + "</strong>:</th><td>" + BRS.formatAmount(response.discountNQT) + " BURST</td></tr>";
+                                output += "<tr><th><strong>" + $.t("discount") + "</strong>:</th><td>" + BRS.formatAmount(response.discountNQT) + " POC</td></tr>";
                             }
                         }
 
@@ -764,7 +764,7 @@ var BRS = (function(BRS, $, undefined) {
                         }
 
                         if (type == "dgs_view_refund_modal") {
-                            output += "<tr><th><strong>" + $.t("refund_price") + "</strong>:</th><td>" + BRS.formatAmount(response.refundNQT) + " BURST</td></tr>";
+                            output += "<tr><th><strong>" + $.t("refund_price") + "</strong>:</th><td>" + BRS.formatAmount(response.refundNQT) + " POC</td></tr>";
                         }
 
                         if (response.note && (type == "dgs_view_purchase_modal" || type == "dgs_delivery_modal")) {
@@ -932,7 +932,7 @@ var BRS = (function(BRS, $, undefined) {
             else {
                 var output = "<table>";
                 output += "<tr><th style='width:85px'><strong>" + $.t("product") + "</strong>:</th><td>" + String(response.name).escapeHTML() + "</td></tr>";
-                output += "<tr><th><strong>" + $.t("price") + "</strong>:</th><td>" + BRS.formatAmount(response.priceNQT) + " BURST</td></tr>";
+                output += "<tr><th><strong>" + $.t("price") + "</strong>:</th><td>" + BRS.formatAmount(response.priceNQT) + " POC</td></tr>";
                 output += "<tr><th><strong>" + $.t("seller") + "</strong>:</th><td><a href='#' data-user='" + BRS.getAccountFormatted(response, "seller") + "' class='user_info'>" + BRS.getAccountTitle(response, "seller") + "</a></td></tr>";
                 if (response.delisted) {
                     output += "<tr><th><strong>" + $.t("status") + "</strong>:</th><td>" + $.t("no_longer_for_sale") + "</td></tr>";
@@ -960,11 +960,11 @@ var BRS = (function(BRS, $, undefined) {
                 $modal.find("input[name=recipient]").val(response.sellerRS);
 
                 $("#dgs_purchase_price").val(String(response.priceNQT).escapeHTML());
-                $("#dgs_total_purchase_price").html(BRS.formatAmount(response.priceNQT) + " BURST");
+                $("#dgs_total_purchase_price").html(BRS.formatAmount(response.priceNQT) + " POC");
 
                 $("#dgs_purchase_quantity").on("change", function() {
                     var totalNQT = new BigInteger(response.priceNQT).multiply(new BigInteger(String($(this).val()))).toString();
-                    $("#dgs_total_purchase_price").html(BRS.formatAmount(totalNQT) + " BURST");
+                    $("#dgs_total_purchase_price").html(BRS.formatAmount(totalNQT) + " POC");
                 });
             }
         }, false);
@@ -987,7 +987,7 @@ var BRS = (function(BRS, $, undefined) {
         if (seller === "") {
             BRS.pages.dgs_search();
         }
-        else if (/^(BURST\-)/i.test(seller)) {
+        else if (/^(POC\-)/i.test(seller)) {
             var address = new NxtAddress();
 
             if (!address.set(seller)) {
@@ -1017,7 +1017,7 @@ var BRS = (function(BRS, $, undefined) {
     $("#dgs_clear_results").on("click", function(e) {
         e.preventDefault();
 
-        $(".dgs_search input[name=q]").val("").trigger("unmask").mask("BURST-****-****-****-*****", {
+        $(".dgs_search input[name=q]").val("").trigger("unmask").mask("POC-****-****-****-*****", {
             "unmask": false
         });
 

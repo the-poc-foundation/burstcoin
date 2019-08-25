@@ -39,7 +39,7 @@ var BRS = (function(BRS, $, undefined) {
 		    }
 		},
 		"filter": function(entry, tokens) {
-		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("BURST tipping bot has arrived") == -1;
+		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("POC tipping bot has arrived") == -1;
 		}
 	    };
 

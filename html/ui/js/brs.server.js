@@ -303,7 +303,7 @@ var BRS = (function(BRS, $, undefined) {
 
                 if (typeof data == "object" && "recipient" in data) {
                   var address = new NxtAddress();
-                    if (/^BURST\-/i.test(data.recipient)) {
+                    if (/^POC\-/i.test(data.recipient)) {
                         data.recipientRS = data.recipient;
 
                         if (address.set(data.recipient)) {
@@ -488,7 +488,7 @@ var BRS = (function(BRS, $, undefined) {
         if (!("recipient" in data)) {
             //recipient == genesis
             data.recipient = "0";
-            data.recipientRS = "BURST-2222-2222-2222-22222";
+            data.recipientRS = "POC-2222-2222-2222-22222";
         }
 
         if (transaction.publicKey != BRS.accountInfo.publicKey) {
