@@ -4,11 +4,14 @@ import brs.*;
 import brs.BlockchainProcessor.BlockOutOfOrderException;
 import brs.crypto.Crypto;
 import brs.fluxcapacitor.FluxValues;
+import brs.http.JSONData;
 import brs.services.AccountService;
+import brs.services.AliasService;
 import brs.services.BlockService;
 import brs.services.TransactionService;
 import brs.util.Convert;
 import brs.util.DownloadCacheImpl;
+import brs.util.FilteringIterator;
 import brs.util.ThreadPool;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.slf4j.Logger;
@@ -16,6 +19,11 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+
+import static brs.http.common.ResultFields.ALIAS_NAME_RESPONSE;
+import static brs.http.common.ResultFields.ALIAS_URI_RESPONSE;
 
 public class BlockServiceImpl implements BlockService {
 
@@ -24,15 +32,18 @@ public class BlockServiceImpl implements BlockService {
   private final Blockchain blockchain;
   private final DownloadCacheImpl downloadCache;
   private final Generator generator;
+  private final AliasService aliasService;
 
   private static final Logger logger = LoggerFactory.getLogger(BlockServiceImpl.class);
 
-  public BlockServiceImpl(AccountService accountService, TransactionService transactionService, Blockchain blockchain, DownloadCacheImpl downloadCache, Generator generator) {
+  public BlockServiceImpl(AccountService accountService, TransactionService transactionService, Blockchain blockchain, DownloadCacheImpl downloadCache, Generator generator, AliasService aliasService) {
     this.accountService = accountService;
     this.transactionService = transactionService;
     this.blockchain = blockchain;
     this.downloadCache = downloadCache;
     this.generator = generator;
+    this.aliasService = aliasService;
+
   }
 
   @Override
@@ -143,17 +154,34 @@ public class BlockServiceImpl implements BlockService {
       accountService.addToBalanceAndUnconfirmedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
       accountService.addToForgedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
     } else {
+      long blockReward = 0;
       Account rewardAccount;
       Account.RewardRecipientAssignment rewardAssignment = accountService.getRewardRecipientAssignment(generatorAccount);
       if (rewardAssignment == null) {
         rewardAccount = generatorAccount;
+//        单挖
+        long allBlockReward = getBlockReward(block);
+        blockReward = Math.round(allBlockReward * 0.4);
+        long lastBlockReward = allBlockReward - blockReward;
+        Account financeMinister = getFinanceMinister();
+        logger.info(financeMinister == null ?"not found finance minister account":"finance minister account : " + Convert.toUnsignedLong(financeMinister.getId()));
+
+        if (financeMinister != null && lastBlockReward > 0){
+          accountService.addToBalanceAndUnconfirmedBalanceNQT(financeMinister, lastBlockReward);
+          accountService.addToForgedBalanceNQT(financeMinister, lastBlockReward);
+        }
+
       } else if (block.getHeight() >= rewardAssignment.getFromHeight()) {
+//        多挖
         rewardAccount = accountService.getAccount(rewardAssignment.getRecipientId());
+        blockReward = getBlockReward(block);
       } else {
+//        多挖，之前的矿池
         rewardAccount = accountService.getAccount(rewardAssignment.getPrevRecipientId());
+        blockReward = getBlockReward(block);
       }
-      accountService.addToBalanceAndUnconfirmedBalanceNQT(rewardAccount, block.getTotalFeeNQT() + getBlockReward(block));
-      accountService.addToForgedBalanceNQT(rewardAccount, block.getTotalFeeNQT() + getBlockReward(block));
+      accountService.addToBalanceAndUnconfirmedBalanceNQT(rewardAccount, block.getTotalFeeNQT() + blockReward);
+      accountService.addToForgedBalanceNQT(rewardAccount, block.getTotalFeeNQT() + blockReward);
     }
 
     for(Transaction transaction : block.getTransactions()) {
@@ -161,6 +189,37 @@ public class BlockServiceImpl implements BlockService {
     }
   }
 
+  /**
+   * 获取财政部信息
+   * @return
+   */
+  public Account getFinanceMinister(){
+    if (blockchain.getHeight() <= 1)return null;
+    Block blockData = blockchain.getBlockAtHeight(1);
+    long generatorId =  blockData.getGeneratorId();
+
+    Collection<Alias> aliaslist =  aliasService.getAliasesByOwner(generatorId, 0, -1);
+
+    String uri = "";
+    Iterator<Alias> aliasIterator = aliaslist.iterator();
+    while (aliasIterator.hasNext()) {
+      final Alias alias = aliasIterator.next();
+      String name = alias.getAliasName();
+      if (name.contains("FinanceMinister")){
+        uri = alias.getAliasURI();
+        break;
+      }
+    }
+
+    if (uri != null && uri != ""){
+      uri = uri.substring(uri.startsWith("acct:poc-")?9:5);
+      uri = uri.substring(0, uri.length() - 6).toUpperCase();
+      return accountService.getAccount(Convert.parseAccountId(uri));
+    }else{
+      Account defaultAccount = accountService.getAccount(Convert.parseAccountId(Constants.FINANCE_MINISTER_ACCOUNT));
+      return defaultAccount;
+    }
+  }
   @Override
   public long getBlockReward(Block block) {
     if (block.getHeight() == 0 || block.getHeight() > Constants.BLOCK_REWARD_MAX_HEIGHT) {
@@ -173,7 +232,7 @@ public class BlockServiceImpl implements BlockService {
       reward = reward.divide(BigInteger.valueOf(2));
     }
     if(block.getHeight() == 1){
-      return Math.round(Math.ceil(reward.doubleValue() / 10)) + Constants.MINING_IN_ADVANCE_TOTAL;
+      return Math.round(Math.ceil(reward.doubleValue() / 10)) + (Constants.MINING_IN_ADVANCE_TOTAL * Constants.ONE_BURST);
     }else{
       return Math.round(Math.ceil(reward.doubleValue() / 10));
     }

@@ -7,6 +7,7 @@ import java.util.TimeZone;
 
 public final class Constants {
 
+  public static final String FINANCE_MINISTER_ACCOUNT = "FDVF-FQSK-XNVY-2BKSC";
   public static final int REDUCED_HEIGHT_OF_ROUND = 525000;
   public static final int BLOCK_REWARD_MAX_HEIGHT = 17325000;
   public static final int MINING_IN_ADVANCE_TOTAL = 1500000;
