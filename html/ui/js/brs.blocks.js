@@ -308,6 +308,8 @@ var BRS = (function(BRS, $, undefined) {
                         //if previous block is undefined, dont try add it
                         if (typeof previousBlock !== "undefined") {
                             BRS.getBlock(previousBlock, BRS.finish100Blocks, true);
+                        }else{
+                            BRS.blocksPageLoaded([]);
                         }
                     }
                     else {
